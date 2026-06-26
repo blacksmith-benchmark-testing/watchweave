@@ -1,0 +1,585 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "schema-version": "1.13.0",
+    "install": {
+      "nodejs_20": {
+        "pkg-path": "nodejs_20"
+      },
+      "postgresql_15": {
+        "pkg-path": "postgresql_15"
+      },
+      "python311": {
+        "pkg-path": "python311"
+      },
+      "redis": {
+        "pkg-path": "redis",
+        "version": "7.2.7"
+      }
+    },
+    "vars": {
+      "DB_HOST": "localhost",
+      "DB_NAME": "watchweave",
+      "DB_PASSWORD": "watchweave123",
+      "DB_PORT": "5432",
+      "DB_USER": "postgres",
+      "FLASK_DEBUG": "true",
+      "JWT_SECRET": "dev-jwt-secret-change-in-production",
+      "NODE_ENV": "development",
+      "PGDATABASE": "watchweave",
+      "PGDATA_DIR": "postgres_data",
+      "PGPASS": "watchweave123",
+      "PGUSER": "postgres",
+      "PORT": "3000",
+      "REACT_APP_API_URL": "http://localhost:3000",
+      "REACT_APP_RECOMMENDATION_URL": "http://localhost:5000",
+      "REDIS_HOST": "localhost",
+      "REDIS_PORT": "6379"
+    },
+    "hook": {
+      "on-activate": "  if [ ! -d \"$FLOX_ENV_CACHE/python-venv\" ]; then\n    python3 -m venv \"$FLOX_ENV_CACHE/python-venv\"\n  fi\n\n  export PGDATA=\"$FLOX_ENV_CACHE/$PGDATA_DIR\"\n  if [ ! -d \"$PGDATA\" ]; then\n    initdb \"$PGDATA\" --username \"$PGUSER\" -A md5 --pwfile=<(echo \"$PGPASS\") --auth=trust\n    echo \"completed initdb in $PGDATA\"\n  fi\n"
+    },
+    "profile": {
+      "common": "  source \"$FLOX_ENV_CACHE/python-venv/bin/activate\"\n"
+    },
+    "options": {},
+    "services": {
+      "postgres": {
+        "command": "exec postgres -D \"$PGDATA\" -p \"$DB_PORT\" -c listen_addresses='localhost'"
+      },
+      "redis": {
+        "command": "exec redis-server --port $REDIS_PORT --bind localhost"
+      }
+    }
+  },
+  "packages": [
+    {
+      "attr_path": "nodejs_20",
+      "broken": false,
+      "derivation": "/nix/store/425iislzk6qm7ggrz9vl50bnrhwanqiq-nodejs-20.19.3.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs_20",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "nodejs-20.19.3",
+      "pname": "nodejs_20",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:33:05.095006Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "20.19.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/qhjd37c32rbnb6nsfmy8n87llh72gawp-nodejs-20.19.3-dev",
+        "libv8": "/nix/store/170agaygpqbm850b7qwz3043jszk67yq-nodejs-20.19.3-libv8",
+        "out": "/nix/store/4d5aarzc4ca3q50qsfxfvzkld0mpjz2k-nodejs-20.19.3"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nodejs_20",
+      "broken": false,
+      "derivation": "/nix/store/vz4gvjwcbqq3x88nyhvgavxsf8sy19z8-nodejs-20.19.3.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs_20",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "nodejs-20.19.3",
+      "pname": "nodejs_20",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:41:29.175838Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "20.19.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/byimaa00vwir5aalag6ajx8s7agy0qr4-nodejs-20.19.3-dev",
+        "libv8": "/nix/store/5xpzv5pxvn35qcgbzp3mb61dxi0d91hf-nodejs-20.19.3-libv8",
+        "out": "/nix/store/aahc92wlrxr7dmd1iwpalril5sb3grl7-nodejs-20.19.3"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nodejs_20",
+      "broken": false,
+      "derivation": "/nix/store/5h1xh2q98ylz8xgcplsych10sh64zhkh-nodejs-20.19.3.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs_20",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "nodejs-20.19.3",
+      "pname": "nodejs_20",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:49:32.017685Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "20.19.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/sy3k1i7vd7ks5k2lqkjbhpjcqpmj3841-nodejs-20.19.3-dev",
+        "libv8": "/nix/store/fhglk1446b46zwfm7821q639w2i20v5k-nodejs-20.19.3-libv8",
+        "out": "/nix/store/ilyq85w4z89cp8461svlyizzm3inx4r8-nodejs-20.19.3"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "nodejs_20",
+      "broken": false,
+      "derivation": "/nix/store/hih2lm909m1f8ra01v9hbkzdimqf68b2-nodejs-20.19.3.drv",
+      "description": "Event-driven I/O framework for the V8 JavaScript engine",
+      "install_id": "nodejs_20",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "nodejs-20.19.3",
+      "pname": "nodejs_20",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:57:14.306464Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "20.19.3",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/plnfimg0ws49vrqyx0ppl9xmfaa2s0g0-nodejs-20.19.3-dev",
+        "libv8": "/nix/store/rp98xza0p2znvm3diydvwn6yxdixm4m6-nodejs-20.19.3-libv8",
+        "out": "/nix/store/g6lyzm0jm9v5bxxxsk8w27wn5zzh6lh4-nodejs-20.19.3"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "postgresql_15",
+      "broken": false,
+      "derivation": "/nix/store/6ps5wmcp6agwjar8fccb9dfxbz8x92wv-postgresql-15.13.drv",
+      "description": "Powerful, open source object-relational database system",
+      "install_id": "postgresql_15",
+      "license": "PostgreSQL",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "postgresql-15.13",
+      "pname": "postgresql_15",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:33:12.249338Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "15.13",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/p8pq2xqd2ismcz38cgnfjfqhpa8vvk24-postgresql-15.13-dev",
+        "doc": "/nix/store/sd6n4kcqchcpqszk2x51xbq50pwg3n1n-postgresql-15.13-doc",
+        "jit": "/nix/store/gl6wi0wxlgmvcfrr1iknfcbcbacajknz-postgresql-15.13-jit",
+        "lib": "/nix/store/rjkds4i6n09g6mqngw1g398k4wi1kxcw-postgresql-15.13-lib",
+        "man": "/nix/store/wd58y589nw15chl461hb3arps47h8cwp-postgresql-15.13-man",
+        "out": "/nix/store/537zd7c1g15ml5pcn4p17cy3yvfp42lg-postgresql-15.13",
+        "plperl": "/nix/store/dx18dd7m9b9mg8b1gs2lvqdmkxizx48z-postgresql-15.13-plperl",
+        "plpython3": "/nix/store/8c045mhhcaxqi362r3y3kppf4qz0dif0-postgresql-15.13-plpython3",
+        "pltcl": "/nix/store/9qhykg8a1l41sv7fxhbfc0w3123ipy8i-postgresql-15.13-pltcl"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "postgresql_15",
+      "broken": false,
+      "derivation": "/nix/store/5lf8s5d07qyyiy8c07r91df78zhbwa1c-postgresql-15.13.drv",
+      "description": "Powerful, open source object-relational database system",
+      "install_id": "postgresql_15",
+      "license": "PostgreSQL",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "postgresql-15.13",
+      "pname": "postgresql_15",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:41:43.141783Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "15.13",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/dh2z2c0lwy0vdiy8cqyl3m8cm1nlvvhk-postgresql-15.13-debug",
+        "dev": "/nix/store/5nbblx7c0xq8sd0ci6jh5vpidncdqn4l-postgresql-15.13-dev",
+        "doc": "/nix/store/cvcf6c6m62d0601dxr51rvyxwyi323s6-postgresql-15.13-doc",
+        "jit": "/nix/store/hy443pcafk3fxn12bfa0gaghlw1wk7b6-postgresql-15.13-jit",
+        "lib": "/nix/store/jg8lfsfazacrjkr14l4bsdm4949g1iyh-postgresql-15.13-lib",
+        "man": "/nix/store/3kbshag175if0h7kykdsinb2dfr2fl1b-postgresql-15.13-man",
+        "out": "/nix/store/h2950p841c3cdii69c7ay8fimxs8zfg7-postgresql-15.13",
+        "plperl": "/nix/store/gz51a583y22ykp9cai62lfcy78xd10zj-postgresql-15.13-plperl",
+        "plpython3": "/nix/store/whrjnvk2z448vh4gkdp9lf2b1pq667ih-postgresql-15.13-plpython3",
+        "pltcl": "/nix/store/s0qllclmca1dkrh1sii4lx1bzm55p45v-postgresql-15.13-pltcl"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "postgresql_15",
+      "broken": false,
+      "derivation": "/nix/store/a1wli69ggp341l1d9sqkpanpmaa5x25v-postgresql-15.13.drv",
+      "description": "Powerful, open source object-relational database system",
+      "install_id": "postgresql_15",
+      "license": "PostgreSQL",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "postgresql-15.13",
+      "pname": "postgresql_15",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:49:39.229617Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "15.13",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/r8dmfj5s7m6sicnhiizd42x0y1ap0vvs-postgresql-15.13-dev",
+        "doc": "/nix/store/a0sqp9gfxpaqf45aa6fxksim5cdk70v4-postgresql-15.13-doc",
+        "jit": "/nix/store/qfkwz4vcng1hxi6hhbabaj7919n1bnvb-postgresql-15.13-jit",
+        "lib": "/nix/store/9i18ml7x2s7k13h77d35lvi5kbzy8jcy-postgresql-15.13-lib",
+        "man": "/nix/store/pgc9n40z413sxk3w08l2gw28m6lqcahn-postgresql-15.13-man",
+        "out": "/nix/store/yqr95yy5x1b5d7mpjnsfvvgg71j2ffz6-postgresql-15.13",
+        "plperl": "/nix/store/3rd4agahhy1y5jyywg5cz8v1g6zkfz58-postgresql-15.13-plperl",
+        "plpython3": "/nix/store/r2i2crzww62sk7033v0q80zz96hdabcn-postgresql-15.13-plpython3",
+        "pltcl": "/nix/store/g60gg0hxpsscwwdgqg8bnm75dhd8i05x-postgresql-15.13-pltcl"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "postgresql_15",
+      "broken": false,
+      "derivation": "/nix/store/hy0mgy71jskihr6kcbs7dkhayb1782m8-postgresql-15.13.drv",
+      "description": "Powerful, open source object-relational database system",
+      "install_id": "postgresql_15",
+      "license": "PostgreSQL",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "postgresql-15.13",
+      "pname": "postgresql_15",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:57:30.497482Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "15.13",
+      "outputs_to_install": [
+        "man",
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/xss3maw2ar7lqzp58s5fs80xj67qckjk-postgresql-15.13-debug",
+        "dev": "/nix/store/vd2z3hdfp88hnsrhaqj8m30ccfi78pmg-postgresql-15.13-dev",
+        "doc": "/nix/store/hf4al7p2xyzarxrlv9vaxr1niyg8g8wc-postgresql-15.13-doc",
+        "jit": "/nix/store/2xk1cqz2dq4h3jz35ygcb1np6ifxlwah-postgresql-15.13-jit",
+        "lib": "/nix/store/0hybh7qn5iiwvvbahblbkbziv46bk5jk-postgresql-15.13-lib",
+        "man": "/nix/store/cl8l8549dmp8jfg4g49ryl1409g30xna-postgresql-15.13-man",
+        "out": "/nix/store/692q3vj3qqlal5aijrb578q0lb3hs3hz-postgresql-15.13",
+        "plperl": "/nix/store/1v8vx3gc8bgxlsjndvj5hwcziwafx8gi-postgresql-15.13-plperl",
+        "plpython3": "/nix/store/i5zc24m4msd0isp2nws2c4zpfp19mqar-postgresql-15.13-plpython3",
+        "pltcl": "/nix/store/6334ql0gcg5pma5vrpyrpsxyvdwz760p-postgresql-15.13-pltcl"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311",
+      "broken": false,
+      "derivation": "/nix/store/hd1kdrxsghpc1zxfpbrcfvbqw9xfl2ip-python3-3.11.13.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python311",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "python3-3.11.13",
+      "pname": "python311",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:33:12.688877Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "python3-3.11.13",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/qa0k8h8zngwdzan3cvsmkb1nfq5zb9c5-python3-3.11.13"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311",
+      "broken": false,
+      "derivation": "/nix/store/7ia5zlhdqvvl3v4a52wbwn6kyyw429nn-python3-3.11.13.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python311",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "python3-3.11.13",
+      "pname": "python311",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:41:44.035036Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "python3-3.11.13",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/fy8ynxlxzhl3765y508yh945qsagpajf-python3-3.11.13-debug",
+        "out": "/nix/store/7wn1v5c5z8pf45pb12kic9xw4pdrsyl9-python3-3.11.13"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311",
+      "broken": false,
+      "derivation": "/nix/store/ra4sxb526zl6y5lf3kmb2hpgw76dwg5a-python3-3.11.13.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python311",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "python3-3.11.13",
+      "pname": "python311",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:49:39.645904Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "python3-3.11.13",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/ylnasr0xkb01z2n6sskx9j1mq2nlilxb-python3-3.11.13"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "python311",
+      "broken": false,
+      "derivation": "/nix/store/834inrpg61kl2w8vfbvyrr1x5zdq7dh6-python3-3.11.13.drv",
+      "description": "High-level dynamically-typed programming language",
+      "install_id": "python311",
+      "license": "Python-2.0",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "python3-3.11.13",
+      "pname": "python311",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:57:31.530291Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "python3-3.11.13",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "debug": "/nix/store/b9109y466px7wgbsdl00idn0b2k3zzlx-python3-3.11.13-debug",
+        "out": "/nix/store/rjjg82plny7gzlxh1pwjdmf7wd0zdwp3-python3-3.11.13"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "redis",
+      "broken": false,
+      "derivation": "/nix/store/1zk9s2v9jgzwrviqwymzg4g4bzsdyf0j-redis-7.2.7.drv",
+      "description": "Open source, advanced key-value store",
+      "install_id": "redis",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "redis-7.2.7",
+      "pname": "redis",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:33:40.613976Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "7.2.7",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/z2g5fdrd4bj93fvdp68w84vhp6is7smx-redis-7.2.7"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "redis",
+      "broken": false,
+      "derivation": "/nix/store/r7sx0pjqbbaz5b02i6yh9xnxx27a9s8y-redis-7.2.7.drv",
+      "description": "Open source, advanced key-value store",
+      "install_id": "redis",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "redis-7.2.7",
+      "pname": "redis",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:42:26.657710Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "7.2.7",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/0ywa8pnnygsrm8g51wsljn8n7d2myas1-redis-7.2.7"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "redis",
+      "broken": false,
+      "derivation": "/nix/store/ba6x0kkymfch1439c4ap8xj8q819nmij-redis-7.2.7.drv",
+      "description": "Open source, advanced key-value store",
+      "install_id": "redis",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "redis-7.2.7",
+      "pname": "redis",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:50:09.128805Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "7.2.7",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/zl4x83bwm71fvrm6ijj7x3gha8r21liv-redis-7.2.7"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "redis",
+      "broken": false,
+      "derivation": "/nix/store/ciilcd9md6w44cj0hrhwnkgq8fccgfnd-redis-7.2.7.drv",
+      "description": "Open source, advanced key-value store",
+      "install_id": "redis",
+      "license": "BSD-3-Clause",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "name": "redis-7.2.7",
+      "pname": "redis",
+      "rev": "3016b4b15d13f3089db8a41ef937b13a9e33a8df",
+      "rev_count": 823481,
+      "rev_date": "2025-06-30T08:19:38Z",
+      "scrape_date": "2025-08-18T18:58:17.213672Z",
+      "stabilities": [
+        "staging",
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "7.2.7",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "out": "/nix/store/4wqmskzval5ansj2i0d1bw7rzdzwfm51-redis-7.2.7"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    }
+  ]
+}
