@@ -37,15 +37,24 @@
       "REDIS_PORT": "6379"
     },
     "hook": {
-      "on-activate": "  if [ ! -d \"$FLOX_ENV_CACHE/python-venv\" ]; then\n    python3 -m venv \"$FLOX_ENV_CACHE/python-venv\"\n  fi\n\n  export PGDATA=\"$FLOX_ENV_CACHE/$PGDATA_DIR\"\n  if [ ! -d \"$PGDATA\" ]; then\n    initdb \"$PGDATA\" --username \"$PGUSER\" -A md5 --pwfile=<(echo \"$PGPASS\") --auth=trust\n    echo \"completed initdb in $PGDATA\"\n  fi\n"
+      "on-activate": "  if [ ! -d \"$FLOX_ENV_CACHE/python-venv\" ]; then\n    python3 -m venv \"$FLOX_ENV_CACHE/python-venv\"\n  fi\n\n  export PGDATA=\"$FLOX_ENV_CACHE/$PGDATA_DIR\"\n  if [ ! -d \"$PGDATA\" ]; then\n    initdb \"$PGDATA\" --username \"$PGUSER\" -A md5 --pwfile=<(echo \"$PGPASS\") --auth=trust\n    echo \"completed initdb in $PGDATA\"\n  fi\n\n  pg_ctl -D \"$PGDATA\" -o \"-p $DB_PORT -c unix_socket_directories=$PGDATA\" -l \"$FLOX_ENV_CACHE/postgres.log\" start\n  sleep 1\n  if ! psql -h localhost -p \"$DB_PORT\" -U \"$PGUSER\" -lqt | cut -d \\| -f 1 | grep -qw \"$PGDATABASE\"; then\n    createdb -h localhost -p \"$DB_PORT\" -U \"$PGUSER\" \"$PGDATABASE\"\n    echo \"created database $PGDATABASE\"\n  fi\n  pg_ctl -D \"$PGDATA\" stop\n\n  if [ ! -d \"$FLOX_ENV_PROJECT/backend/node_modules\" ]; then\n    echo \"Installing backend dependencies...\"\n    (cd \"$FLOX_ENV_PROJECT/backend\" && npm install)\n  fi\n  if [ ! -d \"$FLOX_ENV_PROJECT/frontend/node_modules\" ]; then\n    echo \"Installing frontend dependencies...\"\n    (cd \"$FLOX_ENV_PROJECT/frontend\" && npm install)\n  fi\n  if ! \"$FLOX_ENV_CACHE/python-venv/bin/pip\" show flask &>/dev/null; then\n    echo \"Installing recommendation-engine dependencies...\"\n    (cd \"$FLOX_ENV_PROJECT/recommendation-engine\" && \"$FLOX_ENV_CACHE/python-venv/bin/pip\" install -r requirements.txt)\n  fi\n"
     },
     "profile": {
       "common": "  source \"$FLOX_ENV_CACHE/python-venv/bin/activate\"\n"
     },
     "options": {},
     "services": {
+      "backend": {
+        "command": "cd $FLOX_ENV_PROJECT/backend && npm start"
+      },
+      "frontend": {
+        "command": "cd $FLOX_ENV_PROJECT/frontend && PORT=3001 npm start"
+      },
       "postgres": {
-        "command": "exec postgres -D \"$PGDATA\" -p \"$DB_PORT\" -c listen_addresses='localhost'"
+        "command": "exec postgres -D \"$PGDATA\" -p \"$DB_PORT\" -c listen_addresses='localhost' -c unix_socket_directories=\"$PGDATA\""
+      },
+      "recommendation-engine": {
+        "command": "cd $FLOX_ENV_PROJECT/recommendation-engine && $FLOX_ENV_CACHE/python-venv/bin/python app.py"
       },
       "redis": {
         "command": "exec redis-server --port $REDIS_PORT --bind localhost"

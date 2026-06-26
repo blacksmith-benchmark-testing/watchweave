@@ -15,8 +15,6 @@ schema-version = "1.13.0"
 ##  $ flox show gum     <- show all versions of a package
 ## -------------------------------------------------------------------
 [install]
-# gum.pkg-path = "gum"
-# gum.version = "^0.14.5"
 nodejs_20.pkg-path = "nodejs_20"
 python311.pkg-path = "python311"
 postgresql_15.pkg-path = "postgresql_15"
@@ -29,7 +27,6 @@ redis.version = "7.2.7"
 ##      as well as [hook], [profile] scripts and [services] below.
 ## -------------------------------------------------------------------
 [vars]
-# INTRO_MESSAGE = "It's gettin' Flox in here"
 DB_HOST = "localhost"
 DB_PORT = "5432"
 DB_NAME = "watchweave"
@@ -52,15 +49,6 @@ PGDATABASE = "watchweave"
 ##  ... run by _bash_ shell when you run 'flox activate'.
 ## -------------------------------------------------------------------
 [hook]
-# on-activate = '''
-#   # -> Set variables, create files and directories
-#   # -> Perform initialization steps, e.g. create a python venv
-#   # -> Useful environment variables:
-#   #      - FLOX_ENV_PROJECT=/home/user/example
-#   #      - FLOX_ENV=/home/user/example/.flox/run
-#   #      - FLOX_ENV_CACHE=/home/user/example/.flox/cache
-# '''
-
 on-activate = '''
   if [ ! -d "$FLOX_ENV_CACHE/python-venv" ]; then
     python3 -m venv "$FLOX_ENV_CACHE/python-venv"
@@ -71,25 +59,41 @@ on-activate = '''
     initdb "$PGDATA" --username "$PGUSER" -A md5 --pwfile=<(echo "$PGPASS") --auth=trust
     echo "completed initdb in $PGDATA"
   fi
+
+  pg_ctl -D "$PGDATA" -o "-p $DB_PORT -c unix_socket_directories=$PGDATA" -l "$FLOX_ENV_CACHE/postgres.log" start
+  sleep 1
+  if ! psql -h localhost -p "$DB_PORT" -U "$PGUSER" -lqt | cut -d \| -f 1 | grep -qw "$PGDATABASE"; then
+    createdb -h localhost -p "$DB_PORT" -U "$PGUSER" "$PGDATABASE"
+    echo "created database $PGDATABASE"
+  fi
+  pg_ctl -D "$PGDATA" stop
+
+  if [ ! -d "$FLOX_ENV_PROJECT/backend/node_modules" ]; then
+    echo "Installing backend dependencies..."
+    (cd "$FLOX_ENV_PROJECT/backend" && npm install)
+  fi
+  if [ ! -d "$FLOX_ENV_PROJECT/frontend/node_modules" ]; then
+    echo "Installing frontend dependencies..."
+    (cd "$FLOX_ENV_PROJECT/frontend" && npm install)
+  fi
+  if ! "$FLOX_ENV_CACHE/python-venv/bin/pip" show flask &>/dev/null; then
+    echo "Installing recommendation-engine dependencies..."
+    (cd "$FLOX_ENV_PROJECT/recommendation-engine" && "$FLOX_ENV_CACHE/python-venv/bin/pip" install -r requirements.txt)
+  fi
 '''
 
 ## Profile script ----------------------------------------------------
 ## ... sourced by _your shell_ when you run 'flox activate'.
 ## -------------------------------------------------------------------
 [profile]
-# common = '''
-#   gum style \
-#   --foreground 212 --border-foreground 212 --border double \
-#   --align center --width 50 --margin "1 2" --padding "2 4" \
-#     $INTRO_MESSAGE
-# '''
+common = '''
+  source "$FLOX_ENV_CACHE/python-venv/bin/activate"
+'''
 ## Shell-specific customizations such as setting aliases go here:
 # bash = ...
 # zsh  = ...
 # fish = ...
-common = '''
-  source "$FLOX_ENV_CACHE/python-venv/bin/activate"
-'''
+
 
 ## Services ---------------------------------------------------------
 ##  $ flox services start             <- Starts all services
@@ -97,10 +101,15 @@ common = '''
 ##  $ flox activate --start-services  <- Activates & starts all
 ## ------------------------------------------------------------------
 [services]
-# myservice.command = "python3 -m http.server"
-postgres.command = "exec postgres -D \"$PGDATA\" -p \"$DB_PORT\" -c listen_addresses='localhost'"
+postgres.command = "exec postgres -D \"$PGDATA\" -p \"$DB_PORT\" -c listen_addresses='localhost' -c unix_socket_directories=\"$PGDATA\""
 
 redis.command = "exec redis-server --port $REDIS_PORT --bind localhost"
+
+backend.command = "cd $FLOX_ENV_PROJECT/backend && npm start"
+
+recommendation-engine.command = "cd $FLOX_ENV_PROJECT/recommendation-engine && $FLOX_ENV_CACHE/python-venv/bin/python app.py"
+
+frontend.command = "cd $FLOX_ENV_PROJECT/frontend && PORT=3001 npm start"
 
 ## Include ----------------------------------------------------------
 ## ... environments to create a composed environment
