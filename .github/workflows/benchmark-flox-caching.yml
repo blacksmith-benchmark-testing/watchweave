@@ -55,14 +55,15 @@ jobs:
         if: matrix.cache_type == 'sticky-disk'
         run: echo "T_POST_MOUNT=$(date +%s%3N)" >> "$GITHUB_ENV"
 
-      - name: Install Nix
-        uses: nixbuild/nix-quick-install-action@v30
-
       - name: Restore Nix store via actions/cache
         if: matrix.cache_type == 'actions-cache'
         uses: nix-community/cache-nix-action@v7
         with:
           primary-key: nix-${{ matrix.label }}-${{ github.event.inputs.cache_key_suffix }}
+          nix_version: nixos-unstable
+
+      - name: Install Nix
+        uses: nixbuild/nix-quick-install-action@v30
 
       - run: echo "T_INSTALL=$(date +%s)" >> "$GITHUB_ENV"
 
