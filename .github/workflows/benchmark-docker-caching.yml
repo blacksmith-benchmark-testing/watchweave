@@ -1,0 +1,77 @@
+name: Docker Caching Benchmark
+
+on:
+  workflow_dispatch:
+    inputs:
+      cache_key_suffix:
+        description: "Bump this to force cold caches (new keys)"
+        required: false
+        default: "v1"
+
+jobs:
+  docker-bench:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: github-cold
+            runner: ubuntu-latest
+            cache_type: none
+          - label: github-actions-cache
+            runner: ubuntu-latest
+            cache_type: actions-cache
+          - label: blacksmith-actions-cache
+            runner: blacksmith-4vcpu-ubuntu-2204
+            cache_type: actions-cache
+          - label: blacksmith-sticky-disk
+            runner: blacksmith-4vcpu-ubuntu-2204
+            cache_type: sticky-disk
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Start timer
+        run: echo "T_START=$(date +%s)" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v4
+      - run: echo "T_CHECKOUT=$(date +%s)" >> "$GITHUB_ENV"
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build with actions/cache backend
+        if: matrix.cache_type == 'actions-cache'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          tags: watchweave-bench:latest
+          cache-from: type=gha,scope=${{ matrix.label }}-${{ github.event.inputs.cache_key_suffix }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.label }}-${{ github.event.inputs.cache_key_suffix }}
+          load: true
+
+      - name: Setup Blacksmith Docker builder (sticky disk backed)
+        if: matrix.cache_type == 'sticky-disk'
+        uses: useblacksmith/setup-docker-builder@v1
+
+      - name: Build with sticky disk backend
+        if: matrix.cache_type == 'sticky-disk'
+        uses: useblacksmith/build-push-action@v1
+        with:
+          context: .
+          tags: watchweave-bench:latest
+          load: true
+
+      - name: Build with no cache
+        if: matrix.cache_type == 'none'
+        run: docker build -t watchweave-bench:latest .
+
+      - run: echo "T_BUILD=$(date +%s)" >> "$GITHUB_ENV"
+
+      - name: Report timings
+        run: |
+          {
+            echo "### Docker build — ${{ matrix.label }}"
+            echo "| Phase | Seconds |"
+            echo "|---|---|"
+            echo "| Checkout | $((T_CHECKOUT - T_START)) |"
+            echo "| Docker build | $((T_BUILD - T_CHECKOUT)) |"
+            echo "| **Total** | **$((T_BUILD - T_START))** |"
+          } >> "$GITHUB_STEP_SUMMARY"
