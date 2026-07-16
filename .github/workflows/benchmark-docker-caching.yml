@@ -41,7 +41,7 @@ jobs:
         if: matrix.cache_type == 'actions-cache'
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./backend
           tags: watchweave-bench:latest
           cache-from: type=gha,scope=${{ matrix.label }}-${{ github.event.inputs.cache_key_suffix }}
           cache-to: type=gha,mode=max,scope=${{ matrix.label }}-${{ github.event.inputs.cache_key_suffix }}
@@ -53,15 +53,15 @@ jobs:
 
       - name: Build with sticky disk backend
         if: matrix.cache_type == 'sticky-disk'
-        uses: useblacksmith/build-push-action@v1
+        uses: useblacksmith/build-push-action@v2
         with:
-          context: .
+          context: ./backend
           tags: watchweave-bench:latest
           load: true
 
       - name: Build with no cache
         if: matrix.cache_type == 'none'
-        run: docker build -t watchweave-bench:latest .
+        run: docker build -t watchweave-bench:latest ./backend
 
       - run: echo "T_BUILD=$(date +%s)" >> "$GITHUB_ENV"
 
