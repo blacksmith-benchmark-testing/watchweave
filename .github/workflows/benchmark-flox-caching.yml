@@ -17,6 +17,9 @@ jobs:
           - label: github-cold
             runner: ubuntu-latest
             cache_type: none
+          - label: blacksmith-cold
+            runner: blacksmith-8vcpu-ubuntu-2204
+            cache_type: none
           - label: github-actions-cache
             runner: ubuntu-latest
             cache_type: actions-cache
