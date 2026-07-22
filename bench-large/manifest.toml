@@ -1,0 +1,23 @@
+version = 1
+
+[install]
+gcc.pkg-path = "gcc"
+cmake.pkg-path = "cmake"
+llvm.pkg-path = "llvm"
+clang.pkg-path = "clang"
+boost.pkg-path = "boost"
+python3.pkg-path = "python3"
+python3Packages-numpy.pkg-path = "python3Packages.numpy"
+python3Packages-scipy.pkg-path = "python3Packages.scipy"
+python3Packages-pandas.pkg-path = "python3Packages.pandas"
+nodejs.pkg-path = "nodejs"
+rustc.pkg-path = "rustc"
+cargo.pkg-path = "cargo"
+openssl.pkg-path = "openssl"
+zlib.pkg-path = "zlib"
+git.pkg-path = "git"
+
+[hook]
+on-activate = '''
+  echo "Large benchmark environment activated"
+'''

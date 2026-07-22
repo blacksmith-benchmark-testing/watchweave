@@ -1,0 +1,94 @@
+name: Flox/Nix Caching Benchmark (Large Package)
+
+on:
+  workflow_dispatch:
+    inputs:
+      cache_key_suffix:
+        description: "Bump this to force cold caches (new keys)"
+        required: false
+        default: "v1"
+
+jobs:
+  nix-bench-large:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: github-cold
+            runner: ubuntu-latest
+            cache_type: none
+          - label: blacksmith-cold
+            runner: blacksmith-8vcpu-ubuntu-2204
+            cache_type: none
+          - label: github-actions-cache
+            runner: ubuntu-latest
+            cache_type: actions-cache
+          - label: blacksmith-actions-cache
+            runner: blacksmith-8vcpu-ubuntu-2204
+            cache_type: actions-cache
+          - label: blacksmith-sticky-disk
+            runner: blacksmith-8vcpu-ubuntu-2204
+            cache_type: sticky-disk
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Start timer
+        run: echo "T_START=$(date +%s)" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@v4
+      - run: echo "T_CHECKOUT=$(date +%s)" >> "$GITHUB_ENV"
+
+      - name: Create Nix directories (sticky-disk leg only)
+        if: matrix.cache_type == 'sticky-disk'
+        run: |
+          sudo mkdir -p /nix/store
+          sudo chmod -R 777 /nix
+
+      - name: Mark pre-mount
+        if: matrix.cache_type == 'sticky-disk'
+        run: echo "T_PRE_MOUNT=$(date +%s%3N)" >> "$GITHUB_ENV"
+
+      - name: Mount Nix store sticky disk (sticky-disk leg only)
+        if: matrix.cache_type == 'sticky-disk'
+        uses: useblacksmith/stickydisk@v1
+        with:
+          key: watchweave-nix-large-${{ matrix.label }}-${{ github.event.inputs.cache_key_suffix }}
+          path: /nix
+
+      - name: Mark post-mount
+        if: matrix.cache_type == 'sticky-disk'
+        run: echo "T_POST_MOUNT=$(date +%s%3N)" >> "$GITHUB_ENV"
+
+      - name: Install Nix
+        uses: nixbuild/nix-quick-install-action@v30
+
+      - name: Restore Nix store via actions/cache
+        if: matrix.cache_type == 'actions-cache'
+        uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-large-${{ matrix.label }}-${{ github.event.inputs.cache_key_suffix }}
+
+      - run: echo "T_INSTALL=$(date +%s)" >> "$GITHUB_ENV"
+
+      - name: Install Flox
+        uses: flox/install-flox-action@v2
+
+      - name: Flox activate (large environment)
+        working-directory: ./bench-large
+        run: flox activate -s -- echo "activated"
+
+      - run: echo "T_ACTIVATE=$(date +%s)" >> "$GITHUB_ENV"
+
+      - name: Report timings
+        run: |
+          {
+            echo "### Flox/Nix (LARGE) — ${{ matrix.label }}"
+            echo "| Phase | Seconds |"
+            echo "|---|---|"
+            echo "| Checkout | $((T_CHECKOUT - T_START)) |"
+            if [ -n "${T_PRE_MOUNT:-}" ] && [ -n "${T_POST_MOUNT:-}" ]; then
+              echo "| Sticky disk mount only | $(echo "scale=3; ($T_POST_MOUNT - $T_PRE_MOUNT)/1000" | bc) |"
+            fi
+            echo "| Nix install/cache restore | $((T_INSTALL - T_CHECKOUT)) |"
+            echo "| flox activate | $((T_ACTIVATE - T_INSTALL)) |"
+            echo "| **Total** | **$((T_ACTIVATE - T_START))** |"
+          } >> "$GITHUB_STEP_SUMMARY"
