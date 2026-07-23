@@ -17,6 +17,9 @@ jobs:
           - label: github-cold
             runner: ubuntu-latest
             cache_type: none
+          - label: blacksmith-cold
+            runner: blacksmith-4vcpu-ubuntu-2204
+            cache_type: none
           - label: github-actions-cache
             runner: ubuntu-latest
             cache_type: actions-cache
@@ -35,6 +38,7 @@ jobs:
       - run: echo "T_CHECKOUT=$(date +%s)" >> "$GITHUB_ENV"
 
       - name: Set up Buildx
+        if: matrix.cache_type != 'sticky-disk'
         uses: docker/setup-buildx-action@v3
 
       - name: Build with actions/cache backend
@@ -50,6 +54,8 @@ jobs:
       - name: Setup Blacksmith Docker builder (sticky disk backed)
         if: matrix.cache_type == 'sticky-disk'
         uses: useblacksmith/setup-docker-builder@v1
+        with:
+          nofallback: true
 
       - name: Build with sticky disk backend
         if: matrix.cache_type == 'sticky-disk'
